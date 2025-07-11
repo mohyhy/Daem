@@ -7,3 +7,6 @@ admin.site.register(UserProfile)
 admin.site.register(AISuggestion)
 admin.site.register(MoodLog)
 admin.site.register(ChatMessage)
+admin.site.register(AIModelLog)
+admin.site.register(Resource)
+
