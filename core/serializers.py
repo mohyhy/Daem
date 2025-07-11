@@ -6,14 +6,15 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ['username', 'email', 'password']
+        fields = ['username', 'email', 'password','role']
 
     def create(self, validated_data):
         # إنشاء مستخدم جديد باستخدام create_user لضمان تشفير كلمة المرور
         user = UserProfile.objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],
-            password=validated_data['password']
+            password=validated_data['password'],
+            role=validated_data['role']
         )
         return user
 

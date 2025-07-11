@@ -48,7 +48,7 @@ class UserProfileList(APIView):
 
 # ✅ جلسات المستخدم (Client فقط)
 class SessionView(APIView):
-    permission_classes = [IsClient| IsAdmin]
+    permission_classes = [IsClient|IsAdmin]
 
     def get(self, request):
         active_session = Session.objects.filter(user=request.user, is_active=True).first()
@@ -144,7 +144,10 @@ class ChatMessageView(APIView):
     permission_classes = [IsSessionOwner | CanEditSession]
 
     def post(self, request):
-        session_id = request.data.get('session_id')
+        serializer = ChatMessageSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=400)
+        session_id = request.data.get('session')
         content = request.data.get('content')
 
         if not session_id or not content:
