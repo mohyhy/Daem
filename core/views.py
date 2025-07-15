@@ -6,6 +6,8 @@ from datetime import timedelta
 from django.utils import timezone
 from django.db.utils import IntegrityError
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from .models import *
 from .serializers import (
@@ -30,21 +32,26 @@ class UserProfileList(APIView):
 
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
+
         if serializer.is_valid():
-            try:
-                serializer.save()
-                return Response({
-                    "message": "تم تسجيل المستخدم بنجاح!",
-                    "user": serializer.data
-                }, status=status.HTTP_201_CREATED)
-            except IntegrityError:
-                return Response({
-                    "message": "فشل التسجيل. البريد الإلكتروني أو اسم المستخدم مسجل مسبقًا."
-                }, status=status.HTTP_400_BAD_REQUEST)
+            serializer.save()
+            return Response({
+                "message": "تم تسجيل المستخدم بنجاح!",
+                "user": serializer.data
+            }, status=status.HTTP_201_CREATED)
+        
+        # ترجع الأخطاء المفصلة من الفاليديشن
         return Response({
             "message": "فشل التسجيل.",
             "errors": serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
+
+class CurrentUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserRegistrationSerializer(request.user)
+        return Response(serializer.data)
 
 # ✅ جلسات المستخدم (Client فقط)
 class SessionView(APIView):
@@ -143,6 +150,31 @@ class SessionDetailView(APIView):
 class ChatMessageView(APIView):
     permission_classes = [IsSessionOwner | CanEditSession]
 
+    @swagger_auto_schema(
+        operation_description="إرسال رسالة من المستخدم للذكاء الاصطناعي",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['session', 'content'],
+            properties={
+                'session': openapi.Schema(type=openapi.TYPE_INTEGER, description='معرّف الجلسة'),
+                'content': openapi.Schema(type=openapi.TYPE_STRING, description='نص الرسالة')
+            }
+        ),
+        responses={
+            200: openapi.Response(
+                description="رد الذكاء الاصطناعي",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'ai_response': openapi.Schema(type=openapi.TYPE_STRING),
+                        'sentiment': openapi.Schema(type=openapi.TYPE_STRING),
+                    }
+                )
+            ),
+            404: "الجلسة غير موجودة"
+        }
+    )
+
     def post(self, request):
         serializer = ChatMessageSerializer(data=request.data)
         if not serializer.is_valid():
@@ -156,7 +188,7 @@ class ChatMessageView(APIView):
         session = get_object_or_404(Session, id=session_id, is_active=True)
         refresh_session_activity(session)
 
-        detected_mood = analyze_sentiment_scoring(content)
+        detected_mood ,sentiment_score = analyze_sentiment_scoring(content)
         ai_response = generate_support_reply(detected_mood)
 
         user_message = ChatMessage.objects.create(
@@ -194,7 +226,7 @@ class ChatMessageView(APIView):
                 session=session,
                 mood=detected_mood,
                 notes=f"إنشاء المزاج الأول للجلسة بناءً على الرسالة: {content[:30]}...",
-                sentiment_score=0
+                sentiment_score=sentiment_score
             )
 
 

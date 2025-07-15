@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone  # استيراد مكتبة الوقت
+
 
 class UserProfile(AbstractUser):
     ROLE_CHOICES = (
@@ -17,7 +19,6 @@ class UserProfile(AbstractUser):
 
 
 
-from django.utils import timezone  # استيراد مكتبة الوقت
 
 class Session(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='user_sessions')

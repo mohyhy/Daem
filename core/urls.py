@@ -8,7 +8,8 @@ from .views import (
     ResourceListCreateView,
     ResourceDetailView,
     SessionDetailView,
-    PlatformStatsView
+    PlatformStatsView,
+    CurrentUserView
 )
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -39,6 +40,8 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # الحصول على التوكن (Access + Refresh)
 
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), # تحديث Access Token باستخدام Refresh Token
+    
+    path('me/', CurrentUserView.as_view(), name='current-user'),
 
 
     # ✅ جلسات

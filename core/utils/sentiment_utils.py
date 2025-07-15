@@ -4,7 +4,9 @@ sadness_words = [
     "مهموم", "موجوع", "كئيب", "مكسور", "منزعج", "تعيس", "مخنوق", "فقدت", "خسرت",
     "فقدان", "صعب", "قاسي", "مأساة", "مؤلم", "كارثي", "حُزن", "جروح", "دموع", 
     "كآبة", "حالة نفسية", "موجة حزن", "نزيف روحي", "جرح غائر", "مكسور الخاطر", "مُنهار", "مُحبط جداً",
-    "قصف", "شهداء", "دمرت", "دمار", "حرب", "نزوح", "تهجير", "فقدت بيتي", "اصابة"
+    "قصف", "شهداء", "دمرت", "دمار", "حرب", "نزوح", "تهجير", "فقدت بيتي", "اصابة",
+    "تعبان", "مرهق", "مش قادر", "ما عندي طاقة", "ما إلي خلق","جعان"
+
 ]
 
 happiness_words = [
@@ -49,10 +51,11 @@ def analyze_sentiment_scoring(text):
             scores["anger"] += 1
 
     if all(score == 0 for score in scores.values()):
-        return "neutral"
+        return "neutral", 0.0
 
     dominant_mood = max(scores, key=scores.get)
-    return dominant_mood
+    score = scores[dominant_mood] / max(10, sum(scores.values()))  # تطبيع الدرجة
+    return dominant_mood, round(score, 2)
 
 def generate_support_reply(mood):
     if mood == "sadness":
