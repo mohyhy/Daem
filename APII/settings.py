@@ -70,7 +70,7 @@ REST_FRAMEWORK = {
 
 }
 AUTH_USER_MODEL = 'core.UserProfile'
-git checkout -b backup-branch
+
 
 
 ROOT_URLCONF = 'APII.urls'
