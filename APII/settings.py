@@ -118,8 +118,6 @@ REST_FRAMEWORK = {
 
 from datetime import timedelta
 
-# إعداد مدة صلاحية توكن الوصول
-from datetime import timedelta
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),     # ⏳ توكن قصير لحماية البيانات النفسية
