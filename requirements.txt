@@ -6,3 +6,4 @@ dj-database-url
 psycopg2-binary
 djangorestframework-simplejwt
 drf-yasg==1.21.7   # أو أي إصدار يظهر عندك
+setuptools>=68.0.0
