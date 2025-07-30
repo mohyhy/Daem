@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,15 +20,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-hizcv4!vhqu*5-8kv^+ilvwgm_60f#oo$8&=3gqfjqn%m+()#_'
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'fallback-secret-key')
-
-
+SECRET_KEY = 'django-insecure-hizcv4!vhqu*5-8kv^+ilvwgm_60f#oo$8&=3gqfjqn%m+()#_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -52,8 +48,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -70,7 +67,6 @@ REST_FRAMEWORK = {
 
 }
 AUTH_USER_MODEL = 'core.UserProfile'
-
 
 
 ROOT_URLCONF = 'APII.urls'
@@ -118,6 +114,8 @@ REST_FRAMEWORK = {
 
 from datetime import timedelta
 
+# إعداد مدة صلاحية توكن الوصول
+from datetime import timedelta
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),     # ⏳ توكن قصير لحماية البيانات النفسية
